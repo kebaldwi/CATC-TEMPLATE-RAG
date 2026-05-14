@@ -224,9 +224,9 @@ While this would configure the access ports, and modify the port channel for ups
 To exclude specific commands from compliance checks in Catalyst Center, you can use the **ignore-compliance** flags. These flags, added to your templates, tell Catalyst Center to bypass compliance checks for commands within those boundaries. Specifically, you can enclose the commands you want to omit with:
 
 ```J2
- ! @ start-ignore-compliance 
+ ! @start-ignore-compliance 
  
- ! @ end-ignore-compliance
+ ! @end-ignore-compliance
 ```
 
 Here's a breakdown:
@@ -240,17 +240,17 @@ There might be situations where you need to make changes to a device's configura
 
 #### How to Omit Commands
 
-**! @ start-ignore-compliance**: This flag indicates the start of a section in the template that should be excluded from compliance checks.
+**! @start-ignore-compliance**: This flag indicates the start of a section in the template that should be excluded from compliance checks.
 
-**! @ end-ignore-compliance**: This flag indicates the end of the section that should be excluded from compliance checks.
+**! @end-ignore-compliance**: This flag indicates the end of the section that should be excluded from compliance checks.
 
 Example: 
 
 ```sh
     interface GigabitEthernet1/0/1
-     ! @ start-ignore-compliance
+     ! @start-ignore-compliance
      no switchport
-     ! @ end-ignore-compliance
+     ! @end-ignore-compliance
      switchport mode trunk
      switchport trunk allowed vlan 100,200
 ```

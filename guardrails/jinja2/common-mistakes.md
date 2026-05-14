@@ -389,6 +389,23 @@ PnP-Onboarding: Titanium-L2-PnP-Jinja-Template.j2
 DayN:           Access-DayN-Composite.yml
 ```
 
+## 26. Multiline comments not ending on new line. `{# #}`
+
+Multiline comments must end on a new line. If the closing `#}` is not on a new line, the comment will not be properly closed and may cause syntax errors or unexpected behavior in the template.
+
+```j2
+{# bad #}
+{# This is a multiline comment 
+that ends on a new line #}
+
+
+{# good #}
+{# 
+This is a multiline comment 
+that ends on a new line 
+#}
+```
+
 ## See also
 
 * [invalid-syntax-patterns.md](./invalid-syntax-patterns.md)

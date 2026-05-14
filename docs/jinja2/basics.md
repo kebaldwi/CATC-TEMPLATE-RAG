@@ -18,9 +18,19 @@ The Jinja2 language typically allows for logical constructs, macros and more. It
 
 Comment statements are a useful tool for scripting and allow for descriptive text to be used to explain the design or functionality of code. In simple IOS configurations anything after a '!' is not implemented but this is not true in Jinja2. To that end anything with a '!' is rendered as actual code so if something is desired not to be processed within this templating language please use `{#...#}` encapsulation. This makes sure the included text is not evaluated nor rendered.
 
+When using comments it is important to remember that they are not rendered and therefore will not be visible in the final output. This means that if you want to include comments in the final output you will need to use the comment character '!' and not the Jinja2 comment encapsulation.
+
 [//]: # ({% raw %})
 ```j2
 {# Comments can be placed here #}
+```
+
+Additionally if you use comments and they extend over one line you will need to encapsulate them with the Begin and End comment tags as shown below.
+
+```j2
+{# 
+Comments can be placed here and they can extend over multiple lines as long as they are encapsulated with the begin and end comment tags 
+#}
 ```
 
 ## Variable Usage
