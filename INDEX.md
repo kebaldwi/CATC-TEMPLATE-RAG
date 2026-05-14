@@ -53,6 +53,13 @@ for autonomous-agent operating instructions.
 | [docs/jinja2/dictionaries.md](docs/jinja2/dictionaries.md) | jinja2 | docs | dictionaries | Jinja2 — Dictionaries & Lists-of-Dictionaries |
 | [docs/system-variables.md](docs/system-variables.md) | shared | docs | system-variables | System Variables Deep Dive |
 | [docs/templates.md](docs/templates.md) | shared | docs | templates | Catalyst Center Template Types |
+| [docs/templates/README.md](docs/templates/README.md) | shared | docs | templates-index | Templates — PnP & DayN authoring guide |
+| [docs/templates/build-methodology.md](docs/templates/build-methodology.md) | shared | docs | build-methodology | Templates — Build methodology and decision flow |
+| [docs/templates/considerations.md](docs/templates/considerations.md) | shared | docs | considerations | Templates — PnP vs DayN considerations |
+| [docs/templates/dayn-provisioning.md](docs/templates/dayn-provisioning.md) | shared | docs | dayn-provisioning | Templates — DayN provisioning workflow |
+| [docs/templates/dayn-template-design.md](docs/templates/dayn-template-design.md) | shared | docs | dayn-template-design | Templates — DayN template design methodology |
+| [docs/templates/pnp-claim-workflow.md](docs/templates/pnp-claim-workflow.md) | shared | docs | pnp-claim | Templates — PnP claim workflow and operationalization |
+| [docs/templates/pnp-template-design.md](docs/templates/pnp-template-design.md) | shared | docs | pnp-template-design | Templates — PnP (Day-0) onboarding template design |
 | [docs/variables.md](docs/variables.md) | shared | docs | variables | Variables Tutorial |
 | [docs/velocity/advanced.md](docs/velocity/advanced.md) | velocity | docs | advanced | Velocity — Advanced Patterns |
 | [docs/velocity/basics.md](docs/velocity/basics.md) | velocity | docs | basics | Velocity — Scripting Basics |
