@@ -239,6 +239,136 @@ with Python, Ansible, or generic Velocity.
 
 ---
 
+## How to use this repo with an AI assistant/Chat bot
+
+This repo is designed to be a knowledge source for an AI assistant that answers questions about Catalyst Center template authoring. The assistant should use the routing table above to determine which files to load based on the user's question, and then cite specific sections of those files when providing an answer. When relevant, the assistant should quote "bad / good" pairs from the `guardrails/` files to illustrate common mistakes and their corrections. Additionally, when the user asks for examples, the assistant should search the `examples/` directory for relevant patterns and quote them to provide concrete illustrations of how to use certain features or avoid certain pitfalls in Catalyst Center templates.
+
+When answering questions, the assistant should always check for platform-specific limitations by consulting the `what-cc-cannot-do.md` files in the `guardrails/` directory before proposing a solution. This ensures that the advice given is not only syntactically correct but also compatible with the capabilities of Catalyst Center.
+
+Using Monica, AutoGPT, LangSmith, or a similar agent framework, you can set up an agent with access to this repository as its knowledge base. The agent can be programmed to follow the routing logic outlined above, allowing it to provide accurate and contextually relevant answers to user questions about Catalyst Center template authoring.
+
+Generally: 
+
+1. Point the assistant at this repo as a knowledge source.
+2. When the user asks a question, classify it according to the routing table
+   above, load the relevant files, and answer citing specific sections.
+3. When relevant, quote "bad / good" pairs from the `guardrails/` files.
+4. When the user asks for examples, search the `examples/` directory for
+   relevant patterns and quote them.
+
+Use the [`AGENTS.md`](.AGENTS.md) file for specific agent recipes and prompt templates for common question types.
+
+Create a new issue if you want help writing prompts or agent code to work with this repo!
+
+Use the [`INDEX.md`](.INDEX.md) file as a manifest of all content in the repo, with links to each section.
+
+Prompts in the `prompts/` directory are curated starters for common question types — feel free to use or adapt them when building your assistant.
+
+A typical workflow for a user question might look like some of these examples:
+
+#### How do I write a Velocity template that configures VLANs using a list of dictionaries?
+
+1. User: "How do I write a Velocity template that configures VLANs using a list of dictionaries?"
+1. Assistant:
+   - Detects "Velocity" and "how do I write" → loads `docs/velocity/basics.md` and `docs/velocity/advanced.md`.
+   - Finds relevant sections on loops, variables, and dictionaries.
+   - Cites specific sections (e.g., "See `docs/velocity/advanced.md §3.2` for loops and `§4.1` for variable usage in Velocity templates").
+   - Optionally, searches `examples/velocity/` for VLAN-related templates and quotes relevant snippets.
+
+#### Is this template valid? (provides a snippet)
+
+1. User: "Is this template valid?" (provides a snippet)
+1. Assistant:
+   - Detects "Velocity" and "is this valid" → loads `guardrails/velocity/invalid-syntax-patterns.md` and `guardrails/velocity/common-mistakes.md`.
+   - Matches the user's snippet against "Bad" patterns and checks for any matches.
+   - If a match is found, quotes the corresponding "Good" pattern and explains the issue.
+
+#### What can I NOT do in a Velocity template for Catalyst Center?
+
+1. User: "What can I NOT do in a Velocity template for Catalyst Center?"
+1. Assistant:
+   - Loads `guardrails/velocity/what-cc-cannot-do.md`.
+   - Summarizes key limitations (e.g., "Velocity templates in Catalyst Center cannot use `#parse` or `#include` for cross-template composition, and they do not support macros defined after their first call. Additionally, `!` is not a comment and will be forwarded into IOS config, so you should use `##` or `#*` for comments instead.").
+
+#### Show me an example of a Jinja2 template that uses system variables
+
+1. User: "Show me an example of a Jinja2 template that uses system variables."
+1. Assistant:
+   - Detects "Jinja2" and "example" → searches `examples/jinja2/` for templates that reference `__*` system variables.
+   - Finds and quotes relevant snippets (e.g., "Here's an example from `examples/jinja2/Device-Configuration.j2` that uses `{{ __device.platformId }}` to access the device's platform ID: `{% set platform = __device.platformId %} ...`").
+
+#### Can I use Ansible-style Jinja2 syntax in Catalyst Center templates?
+
+1. User: "Can I use Ansible-style Jinja2 syntax in Catalyst Center templates?"
+1. Assistant:
+    - Loads `rules/jinja2/cc-vs-ansible.md`.
+    - Explains differences (e.g., "Catalyst Center's Jinja2 engine supports JS-style operators like `&&`, `||`, and `!` in addition to the standard `and`, `or`, `not`. However, it does not support the `loopcontrols` extension, so `{% break %}` and `{% continue %}` are not available. Also, string concatenation uses `~` instead of `+`, and `+` on strings is treated as arithmetic. Undefined references render as empty strings, which is different from Ansible's default strict mode where they would raise an error.").
+
+#### What are the variable types available in Jinja2 templates for Catalyst Center?
+
+1. User: "What are the variable types available in Jinja2 templates for Catalyst Center?"
+1. Assistant:
+    - Loads `rules/jinja2/variable-types.md`.
+    - Explains the taxonomy of variables (e.g., "In Jinja2 templates for Catalyst Center, there are several categories of variables: User-input variables that are declared in the template and filled in via the Input Form (e.g., `{{ Hostname }}`), Bind variables that are user-input variables bound to Inventory, Settings, Profile, or Cloud (e.g., `{{ ProductID }}`), System variables that are built-in CC objects (e.g., `{{ __device.platformId }}`), and Local variables that are computed within the template (e.g., `{% set x = ... %}`). Each category has specific use cases and limitations, especially in PnP onboarding templates where bind and system variables are not available.").
+
+#### Can I use `{% include %}` in a Jinja2 template for Catalyst Center?
+
+1. User: "Can I use `{% include %}` in a Jinja2 template for Catalyst Center?"
+1. Assistant:
+    - Loads `rules/jinja2/constraints.md`.
+    - Confirms that `{% include %}` is supported and explains how it resolves against the Template Editor project tree, allowing for modular template design.
+
+#### What are some common mistakes to avoid in Jinja2 templates for Catalyst Center?
+
+1. User: "What are some common mistakes to avoid in Velocity templates for Catalyst Center?"
+1. Assistant:
+    - Loads `guardrails/velocity/common-mistakes.md`.
+    - Summarizes common pitfalls (e.g., "A common mistake in Velocity templates is using `#set` to define a variable after its first use, which will lead to an error since Velocity requires macros to be defined before they are called. Another mistake is treating `!` as a comment, which will actually be included in the output and can cause issues in the generated IOS config. Instead, use `##` or `#*` for comments. Additionally, remember that strings only interpolate references inside double quotes, so using single quotes will not work for variable interpolation.").
+
+#### Can I use loops in Velocity templates for Catalyst Center?
+
+1. User: "Can I use loops in Velocity templates for Catalyst Center?"
+1. Assistant:
+    - Loads `docs/velocity/advanced.md` and `rules/velocity/constraints.md`.
+    - Explains that loops are supported using `#foreach`, but there are specific constraints to be aware of (e.g., "You can use `#foreach` to iterate over lists, but keep in mind that Velocity does not support the `loopcontrols` extension, so you cannot use `{% break %}` or `{% continue %}`. Also, be cautious with variable scoping within loops, as Velocity has specific rules about variable visibility. For more details, see `docs/velocity/advanced.md §3.2` and `rules/velocity/constraints.md §5.1`.").
+
+#### What are the limitations of using `{% set %}` in Jinja2 templates for Catalyst Center?
+
+1. User: "What are the limitations of using `{% set %}` in Jinja2 templates for Catalyst Center?"
+1. Assistant:
+    - Loads `rules/jinja2/constraints.md`.
+    - Explains that while `{% set %}` is supported for defining local variables, it cannot be used to define variables that persist across different scopes in the way that bind or system variables do. Additionally, in PnP onboarding templates, you cannot use `{% set %}` to define variables that would be expected to interact with Inventory or Settings, since those are not available in that context. For more details, see `rules/jinja2/constraints.md §4.3` and `guardrails/jinja2/what-cc-cannot-do.md §2.1`.".
+
+#### Can I use macros in Velocity templates for Catalyst Center?
+
+1. User: "Can I use macros in Velocity templates for Catalyst Center?"
+1. Assistant:
+    - Loads `rules/velocity/constraints.md`.
+    - Explains that macros are supported in Velocity templates, but they must be defined before their first call. This means you cannot have a macro that is called before it is defined in the template. For example, if you have `#macro myMacro() ... #end`, you must ensure that this definition appears in the template before any invocation of `#myMacro()`. This is a common source of errors, so be sure to structure your template accordingly. For more details, see `rules/velocity/constraints.md §6.2`.".
+
+#### What are some examples of using system variables in Jinja2 templates for Catalyst Center?
+
+1. User: "What are some examples of using system variables in Jinja2 templates for Catalyst Center?"
+1. Assistant:
+    - Loads `examples/jinja2/Device-Configuration.j2` and `docs/system-variables.md`.
+    - Provides examples of using system variables (e.g., "In Jinja2 templates for Catalyst Center, you can access system variables that provide information about the device, interfaces, network settings, and credentials. For instance, you can use `{{ __device.platformId }}` to get the platform ID of the device, or `{{ __interface.name }}` to get the name of the current interface in a loop. Here's a snippet from `examples/jinja2/Device-Configuration.j2` that demonstrates this: `{% set platform = __device.platformId %} ...` where we set a local variable `platform` to the value of the system variable `__  device.platformId`. For a full list of system variables, see `docs/system-variables.md`.".
+
+#### Can I use `{% break %}` in a Jinja2 template for Catalyst Center?
+
+1. User: "Can I use `{% break %}` in a Jinja2 template for Catalyst Center?"
+1. Assistant:
+    - Loads `rules/jinja2/constraints.md`.
+    - Explains that the `loopcontrols` extension, which provides `{% break %}` and `{% continue %}`, is not enabled in Catalyst Center's Jinja2 engine. This means you cannot use these directives to control loop execution. Instead, you will need to structure your loops and conditionals in a way that does not rely on breaking or continuing. For example, you can use conditional statements to skip certain iterations instead of using `{% continue %}`. For more details, see `rules/jinja2/constraints.md §7.4`.".
+
+#### Can I use string concatenation with `+` in Jinja2 templates for Catalyst Center?
+
+1. User: "Can I use string concatenation with `+` in Jinja2 templates for Catalyst Center?"
+1. Assistant:
+    - Loads `rules/jinja2/cc-vs-ansible.md`.
+    - Explains that in Catalyst Center's Jinja2 engine, string concatenation uses the `~` operator instead of `+`. The `+` operator is treated as arithmetic, so if you try to concatenate strings with `+`, you may end up with unexpected results or errors. For example, instead of writing `{{ "Hello, " + name }}`, you should write `{{ "Hello, " ~ name }}` to concatenate the string "Hello, " with the variable `name`. For more details, see `rules/jinja2/cc-vs-ansible.md §3.2`.".
+
+---
+
 ## Source materials
 
 This corpus distills and reorganises content from:
